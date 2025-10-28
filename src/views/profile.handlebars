@@ -1,0 +1,46 @@
+<div class="container">
+    <h2>Perfil de Usuario</h2>
+    <div id="profileData">
+        <p>Cargando...</p>
+    </div>
+    <button onclick="logout()">Cerrar Sesión</button>
+</div>
+
+<script>
+async function loadProfile() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/sessions/current', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const result = await response.json();
+        if (response.ok) {
+            document.getElementById('profileData').innerHTML = `
+                <p><strong>Nombre:</strong> ${result.user.first_name} ${result.user.last_name}</p>
+                <p><strong>Email:</strong> ${result.user.email}</p>
+                <p><strong>Edad:</strong> ${result.user.age}</p>
+                <p><strong>Rol:</strong> ${result.user.role}</p>
+            `;
+        } else {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    } catch (error) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+}
+
+loadProfile();
+</script>
