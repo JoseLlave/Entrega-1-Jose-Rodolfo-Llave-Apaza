@@ -41,7 +41,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// ✅ bcrypt.hashSync para encriptación
 userSchema.pre('save', function(next) {
   if (!this.isModified('password')) return next();
   
